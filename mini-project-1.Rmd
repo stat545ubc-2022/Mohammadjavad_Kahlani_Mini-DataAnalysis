@@ -1,13 +1,12 @@
 ---
 title: "Mini Data-Analysis Deliverable 1"
-output:
-  html_document: default
-  pdf_document: default
+output: github_document
 editor_options: 
   chunk_output_type: inline
+  
 ---
 
-# Welcome to your (maybe) first-ever data analysis project!
+# Welcome to your part 1 data analysis project!
 
 And hopefully the first of many. Let's get started:
 
@@ -105,13 +104,12 @@ lapply(list(cancer_sample, parking_meters), glimpse)
 
 ```
 
->As it is demonstrated above, these 4 datasets are all in tibble format:\
-  1- __"cancer_sample"__ is in 569 rows and 32 columns.\
-  2- __parking_meters"__ is in 10032 rows and 22 columns.\
-  3- __"vancouver_trees"__ is in 146611 rows and 20 columns.\
-  4- __"flow_sample"__ is in 218 rows and 7 columns.\
-  , each row is an observation and each column is a variable.
-
+> As it is demonstrated above, these 4 datasets are all in tibble format:\
+> 1- **"cancer_sample"** is in 569 rows and 32 columns.\
+> 2- **parking_meters"** is in 10032 rows and 22 columns.\
+> 3- **"vancouver_trees"** is in 146611 rows and 20 columns.\
+> 4- **"flow_sample"** is in 218 rows and 7 columns.\
+> , each row is an observation and each column is a variable.
 
 <!----------------------------------------------------------------------------->
 
@@ -119,21 +117,22 @@ lapply(list(cancer_sample, parking_meters), glimpse)
 
 <!-------------------------- Start your work below ---------------------------->
 
-
->__"cancer_sample"__ and __"vancouver_trees"__ are my choices as they seem to be the most diverse datasets, as their dimension is larger in comparison with other datasets.\
-Note: I tried to hide the r console thorugh echo=F or message=F, but it did not work.
+> **"cancer_sample"** and **"vancouver_trees"** are my choices as they seem to be the most diverse datasets, as their dimension is larger in comparison with other datasets.\
+> Note: I tried to hide the r console thorugh echo=F or message=F, but it did not work.
 
 ```{r}
 dim(cancer_sample)
 dim(vancouver_trees)
 ```
+
 \
 <!----------------------------------------------------------------------------->
 
 1.4 Time for the final decision! Going back to the beginning, it's important to have an *end goal* in mind. For example, if I had chosen the `titanic` dataset for my project, I might've wanted to explore the relationship between survival and other variables. Try to think of 1 research question that you would want to answer with each dataset. Note them down below, and make your final choice based on what seems more interesting to you!
 
 <!-------------------------- Start your work below ---------------------------->
-> I would choose __"vancouver_trees"__ as my final choice. Below you can see an initial domenstration of relation between neighborhood and mean of tree diameters.
+
+> I would choose **"vancouver_trees"** as my final choice. Below you can see an initial domenstration of relation between neighborhood and mean of tree diameters.
 
 ```{r}
 neigh_dia <- vancouver_trees %>% 
@@ -143,6 +142,7 @@ colnames(neigh_dia) <- c("neighborhood", "mdiameter")
 arrange(neigh_dia, desc(mdiameter))
 
 ```
+
 \
 <!----------------------------------------------------------------------------->
 
@@ -152,9 +152,7 @@ Read Tasks 2 and 3 *fully* before starting to complete either of them. Probably 
 
 This project is semi-guided, but meant to be *independent*. For this reason, you will complete tasks 2 and 3 below (under the **START HERE** mark) as if you were writing your own exploratory data analysis report, and this guidance never existed! Feel free to add a brief introduction section to your project, format the document with markdown syntax as you deem appropriate, and structure the analysis as you deem appropriate. Remember, marks will be awarded for completion of the 4 tasks, but 10 points of the whole project are allocated to a reproducible and clean analysis. If you feel lost, you can find a sample data analysis [here](https://www.kaggle.com/headsortails/tidy-titarnic) to have a better idea. However, bear in mind that it is **just an example** and you will not be required to have that level of complexity in your project.\
 
-> __This is a preliminary expletory analysis of collected data from trees in vancouver.
-This dataset is accessible by calling "datateachr" package.__\
-
+> **This is a preliminary expletory analysis of collected data from trees in vancouver. This dataset is accessible by calling "datateachr" package.**\
 
 # Task 2: Exploring your dataset (15 points)
 
@@ -174,6 +172,7 @@ If we rewind and go back to the learning objectives, you'll see that by the end 
 2.2 For each of the 4 exercises that you complete, provide a *brief explanation* of why you chose that exercise in relation to your data (in other words, why does it make sense to do that?), and sufficient comments for a reader to understand your reasoning and code.
 
 <!-------------------------- Start your work below ---------------------------->
+
 ```{r}
 # Exercise 1: Plotting the distribution of trees height in each neighborhood gives an insight to areas that are more populated.
 
@@ -192,6 +191,7 @@ vtrees.na <- vancouver_trees %>%
   summarise_all(funs(sum(is.na(.))))
 print(vtrees.na)
 ```
+
 ```{r}
 # Exercise 7: Making a subset tibble from the dataset of location and planting date of trees.
 
@@ -199,6 +199,7 @@ date.loc <- vancouver_trees %>%
   select(tree_id, date_planted:latitude)
 head(date.loc)
 ```
+
 ```{r}
 # Exercise 8: Exploring a diameter density.
 
@@ -206,10 +207,6 @@ vancouver_trees %>%
 ggplot( aes(diameter)) +
     geom_histogram( binwidth=10, fill="blue", color="white", alpha=0.9)
 ```
-
-
-
-
 
 <!----------------------------------------------------------------------------->
 
@@ -246,9 +243,11 @@ Ensure that the output of each operation is printed!
 Make sure it's clear what research question you are doing each operation for!
 
 <!------------------------- Start your work below ----------------------------->
+
 ```{r}
 
 ```
+
 <!----------------------------------------------------------------------------->
 
 ### 1.2 (3 points)
