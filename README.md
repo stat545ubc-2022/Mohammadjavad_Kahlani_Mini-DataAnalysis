@@ -1,1 +1,1 @@
-# mda-project-template
+Minidata analysis project - Milestone 1
