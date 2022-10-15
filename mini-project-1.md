@@ -163,67 +163,12 @@ comments outside of the code chunk?
 <!-------------------------- Start your work below ---------------------------->
 
 ``` r
-lapply(list(cancer_sample, parking_meters), glimpse)
+fourchoices <- lapply(list(cancer_sample, parking_meters, vancouver_trees, flow_sample), glimpse)
 ```
 
-    ## Rows: 569
-    ## Columns: 32
-    ## $ ID                      <dbl> 842302, 842517, 84300903, 84348301, 84358402, …
-    ## $ diagnosis               <chr> "M", "M", "M", "M", "M", "M", "M", "M", "M", "…
-    ## $ radius_mean             <dbl> 17.990, 20.570, 19.690, 11.420, 20.290, 12.450…
-    ## $ texture_mean            <dbl> 10.38, 17.77, 21.25, 20.38, 14.34, 15.70, 19.9…
-    ## $ perimeter_mean          <dbl> 122.80, 132.90, 130.00, 77.58, 135.10, 82.57, …
-    ## $ area_mean               <dbl> 1001.0, 1326.0, 1203.0, 386.1, 1297.0, 477.1, …
-    ## $ smoothness_mean         <dbl> 0.11840, 0.08474, 0.10960, 0.14250, 0.10030, 0…
-    ## $ compactness_mean        <dbl> 0.27760, 0.07864, 0.15990, 0.28390, 0.13280, 0…
-    ## $ concavity_mean          <dbl> 0.30010, 0.08690, 0.19740, 0.24140, 0.19800, 0…
-    ## $ concave_points_mean     <dbl> 0.14710, 0.07017, 0.12790, 0.10520, 0.10430, 0…
-    ## $ symmetry_mean           <dbl> 0.2419, 0.1812, 0.2069, 0.2597, 0.1809, 0.2087…
-    ## $ fractal_dimension_mean  <dbl> 0.07871, 0.05667, 0.05999, 0.09744, 0.05883, 0…
-    ## $ radius_se               <dbl> 1.0950, 0.5435, 0.7456, 0.4956, 0.7572, 0.3345…
-    ## $ texture_se              <dbl> 0.9053, 0.7339, 0.7869, 1.1560, 0.7813, 0.8902…
-    ## $ perimeter_se            <dbl> 8.589, 3.398, 4.585, 3.445, 5.438, 2.217, 3.18…
-    ## $ area_se                 <dbl> 153.40, 74.08, 94.03, 27.23, 94.44, 27.19, 53.…
-    ## $ smoothness_se           <dbl> 0.006399, 0.005225, 0.006150, 0.009110, 0.0114…
-    ## $ compactness_se          <dbl> 0.049040, 0.013080, 0.040060, 0.074580, 0.0246…
-    ## $ concavity_se            <dbl> 0.05373, 0.01860, 0.03832, 0.05661, 0.05688, 0…
-    ## $ concave_points_se       <dbl> 0.015870, 0.013400, 0.020580, 0.018670, 0.0188…
-    ## $ symmetry_se             <dbl> 0.03003, 0.01389, 0.02250, 0.05963, 0.01756, 0…
-    ## $ fractal_dimension_se    <dbl> 0.006193, 0.003532, 0.004571, 0.009208, 0.0051…
-    ## $ radius_worst            <dbl> 25.38, 24.99, 23.57, 14.91, 22.54, 15.47, 22.8…
-    ## $ texture_worst           <dbl> 17.33, 23.41, 25.53, 26.50, 16.67, 23.75, 27.6…
-    ## $ perimeter_worst         <dbl> 184.60, 158.80, 152.50, 98.87, 152.20, 103.40,…
-    ## $ area_worst              <dbl> 2019.0, 1956.0, 1709.0, 567.7, 1575.0, 741.6, …
-    ## $ smoothness_worst        <dbl> 0.1622, 0.1238, 0.1444, 0.2098, 0.1374, 0.1791…
-    ## $ compactness_worst       <dbl> 0.6656, 0.1866, 0.4245, 0.8663, 0.2050, 0.5249…
-    ## $ concavity_worst         <dbl> 0.71190, 0.24160, 0.45040, 0.68690, 0.40000, 0…
-    ## $ concave_points_worst    <dbl> 0.26540, 0.18600, 0.24300, 0.25750, 0.16250, 0…
-    ## $ symmetry_worst          <dbl> 0.4601, 0.2750, 0.3613, 0.6638, 0.2364, 0.3985…
-    ## $ fractal_dimension_worst <dbl> 0.11890, 0.08902, 0.08758, 0.17300, 0.07678, 0…
-    ## Rows: 10,032
-    ## Columns: 22
-    ## $ meter_head     <chr> "Twin", "Pay Station", "Twin", "Single", "Twin", "Twin"…
-    ## $ r_mf_9a_6p     <chr> "$2.00", "$1.00", "$1.00", "$1.00", "$2.00", "$2.00", "…
-    ## $ r_mf_6p_10     <chr> "$4.00", "$1.00", "$1.00", "$1.00", "$1.00", "$1.00", "…
-    ## $ r_sa_9a_6p     <chr> "$2.00", "$1.00", "$1.00", "$1.00", "$2.00", "$2.00", "…
-    ## $ r_sa_6p_10     <chr> "$4.00", "$1.00", "$1.00", "$1.00", "$1.00", "$1.00", "…
-    ## $ r_su_9a_6p     <chr> "$2.00", "$1.00", "$1.00", "$1.00", "$2.00", "$2.00", "…
-    ## $ r_su_6p_10     <chr> "$4.00", "$1.00", "$1.00", "$1.00", "$1.00", "$1.00", "…
-    ## $ rate_misc      <chr> NA, "$ .50", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
-    ## $ time_in_effect <chr> "METER IN EFFECT: 9:00 AM TO 10:00 PM", "METER IN EFFEC…
-    ## $ t_mf_9a_6p     <chr> "2 Hr", "10 Hrs", "2 Hr", "2 Hr", "2 Hr", "3 Hr", "2 Hr…
-    ## $ t_mf_6p_10     <chr> "4 Hr", "10 Hrs", "4 Hr", "4 Hr", "4 Hr", "4 Hr", "4 Hr…
-    ## $ t_sa_9a_6p     <chr> "2 Hr", "10 Hrs", "2 Hr", "2 Hr", "2 Hr", "3 Hr", "2 Hr…
-    ## $ t_sa_6p_10     <chr> "4 Hr", "10 Hrs", "4 Hr", "4 Hr", "4 Hr", "4 Hr", "4 Hr…
-    ## $ t_su_9a_6p     <chr> "2 Hr", "10 Hrs", "2 Hr", "2 Hr", "2 Hr", "3 Hr", "2 Hr…
-    ## $ t_su_6p_10     <chr> "4 Hr", "10 Hrs", "4 Hr", "4 Hr", "4 Hr", "4 Hr", "4 Hr…
-    ## $ time_misc      <chr> NA, "No Time Limit", NA, NA, NA, NA, NA, NA, NA, NA, NA…
-    ## $ credit_card    <chr> "No", "Yes", "No", "No", "No", "No", "No", "No", "No", …
-    ## $ pay_phone      <chr> "66890", "59916", "57042", "57159", "51104", "60868", "…
-    ## $ longitude      <dbl> -123.1289, -123.0982, -123.1013, -123.1862, -123.1278, …
-    ## $ latitude       <dbl> 49.28690, 49.27215, 49.25468, 49.26341, 49.26354, 49.27…
-    ## $ geo_local_area <chr> "West End", "Strathcona", "Riley Park", "West Point Gre…
-    ## $ meter_id       <chr> "670805", "471405", "C80145", "D03704", "301023", "5913…
+``` r
+head(fourchoices)
+```
 
     ## [[1]]
     ## # A tibble: 569 × 32
@@ -267,6 +212,43 @@ lapply(list(cancer_sample, parking_meters), glimpse)
     ## #   longitude <dbl>, latitude <dbl>, geo_local_area <chr>, meter_id <chr>, and
     ## #   abbreviated variable names ¹​r_mf_9a_6p, ²​r_mf_6p_10, ³​r_sa_9a_6p,
     ## #   ⁴​r_sa_6p_10, ⁵​r_su_9a_6p, ⁶​r_su_6p_10, ⁷​rate_misc, ⁸​time_in_effect
+    ## 
+    ## [[3]]
+    ## # A tibble: 146,611 × 20
+    ##    tree_id civic_number std_st…¹ genus…² speci…³ culti…⁴ commo…⁵ assig…⁶ root_…⁷
+    ##      <dbl>        <dbl> <chr>    <chr>   <chr>   <chr>   <chr>   <chr>   <chr>  
+    ##  1  149556          494 W 58TH … ULMUS   AMERIC… BRANDON BRANDO… N       N      
+    ##  2  149563          450 W 58TH … ZELKOVA SERRATA <NA>    JAPANE… N       N      
+    ##  3  149579         4994 WINDSOR… STYRAX  JAPONI… <NA>    JAPANE… N       N      
+    ##  4  149590          858 E 39TH … FRAXIN… AMERIC… AUTUMN… AUTUMN… Y       N      
+    ##  5  149604         5032 WINDSOR… ACER    CAMPES… <NA>    HEDGE … N       N      
+    ##  6  149616          585 W 61ST … PYRUS   CALLER… CHANTI… CHANTI… N       N      
+    ##  7  149617         4909 SHERBRO… ACER    PLATAN… COLUMN… COLUMN… N       N      
+    ##  8  149618         4925 SHERBRO… ACER    PLATAN… COLUMN… COLUMN… N       N      
+    ##  9  149619         4969 SHERBRO… ACER    PLATAN… COLUMN… COLUMN… N       N      
+    ## 10  149625          720 E 39TH … FRAXIN… AMERIC… AUTUMN… AUTUMN… N       N      
+    ## # … with 146,601 more rows, 11 more variables: plant_area <chr>,
+    ## #   on_street_block <dbl>, on_street <chr>, neighbourhood_name <chr>,
+    ## #   street_side_name <chr>, height_range_id <dbl>, diameter <dbl>, curb <chr>,
+    ## #   date_planted <date>, longitude <dbl>, latitude <dbl>, and abbreviated
+    ## #   variable names ¹​std_street, ²​genus_name, ³​species_name, ⁴​cultivar_name,
+    ## #   ⁵​common_name, ⁶​assigned, ⁷​root_barrier
+    ## 
+    ## [[4]]
+    ## # A tibble: 218 × 7
+    ##    station_id  year extreme_type month   day  flow sym  
+    ##    <chr>      <dbl> <chr>        <dbl> <dbl> <dbl> <chr>
+    ##  1 05BB001     1909 maximum          7     7   314 <NA> 
+    ##  2 05BB001     1910 maximum          6    12   230 <NA> 
+    ##  3 05BB001     1911 maximum          6    14   264 <NA> 
+    ##  4 05BB001     1912 maximum          8    25   174 <NA> 
+    ##  5 05BB001     1913 maximum          6    11   232 <NA> 
+    ##  6 05BB001     1914 maximum          6    18   214 <NA> 
+    ##  7 05BB001     1915 maximum          6    27   236 <NA> 
+    ##  8 05BB001     1916 maximum          6    20   309 <NA> 
+    ##  9 05BB001     1917 maximum          6    17   174 <NA> 
+    ## 10 05BB001     1918 maximum          6    15   345 <NA> 
+    ## # … with 208 more rows
 
 > As it is demonstrated above, these 4 datasets are all in tibble
 > format:  
@@ -419,7 +401,7 @@ vancouver_trees %>%
   coord_flip()
 ```
 
-![](mini-project-1_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 # As it is shown, trees above 7.5 range id are very rare in most of neighborhoods.
@@ -483,7 +465,7 @@ ggplot( aes(diameter)) +
     geom_histogram( binwidth=10, fill="blue", color="white", alpha=0.9)
 ```
 
-![](mini-project-1_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 <!----------------------------------------------------------------------------->
 
@@ -496,6 +478,13 @@ any additional comments at the end of this deliverable. These questions
 are not necessarily set in stone - TAs will review them and give you
 feedback; therefore, you may choose to pursue them as they are for the
 rest of the project, or make modifications!
+
+``` html
+Question 1: Which neighborhood has tallest trees in avarage?
+Question 2: Is there a relationship between genus and height?
+Question 3: In each year, which neighborhood had the most planted trees?
+Question 4: If presume height index bigger than 3.5 as tall, is there a relation between root barrier and height of the tree?
+```
 
 <!--- *****START HERE***** --->
 
@@ -547,6 +536,142 @@ Make sure it’s clear what research question you are doing each operation
 for!
 
 <!------------------------- Start your work below ----------------------------->
+
+# Question 1
+
+**Which neighborhood has tallest trees in avarage?**
+
+``` r
+#summarizing
+tall_tree <- vancouver_trees %>%
+  group_by(neighbourhood_name) %>%
+  summarise(hgt_avg = mean(height_range_id)) %>%
+  arrange(desc(hgt_avg))
+print(tall_tree)
+```
+
+    ## # A tibble: 22 × 2
+    ##    neighbourhood_name hgt_avg
+    ##    <chr>                <dbl>
+    ##  1 KITSILANO             3.26
+    ##  2 SHAUGHNESSY           3.24
+    ##  3 WEST POINT GREY       3.03
+    ##  4 DUNBAR-SOUTHLANDS     3.03
+    ##  5 WEST END              2.88
+    ##  6 KERRISDALE            2.81
+    ##  7 FAIRVIEW              2.80
+    ##  8 ARBUTUS-RIDGE         2.72
+    ##  9 MOUNT PLEASANT        2.65
+    ## 10 GRANDVIEW-WOODLAND    2.60
+    ## # … with 12 more rows
+
+``` r
+#compute the number of observations for at least one of your categorical variables.
+taller_2.6 <- tall_tree %>%
+  filter(hgt_avg >= 2.6)
+print(taller_2.6)
+```
+
+    ## # A tibble: 11 × 2
+    ##    neighbourhood_name       hgt_avg
+    ##    <chr>                      <dbl>
+    ##  1 KITSILANO                   3.26
+    ##  2 SHAUGHNESSY                 3.24
+    ##  3 WEST POINT GREY             3.03
+    ##  4 DUNBAR-SOUTHLANDS           3.03
+    ##  5 WEST END                    2.88
+    ##  6 KERRISDALE                  2.81
+    ##  7 FAIRVIEW                    2.80
+    ##  8 ARBUTUS-RIDGE               2.72
+    ##  9 MOUNT PLEASANT              2.65
+    ## 10 GRANDVIEW-WOODLAND          2.60
+    ## 11 KENSINGTON-CEDAR COTTAGE    2.60
+
+``` r
+#number of neighbourhoods with avarge tree heigt greater than 2.6
+length(row.names(taller_2.6))
+```
+
+    ## [1] 11
+
+``` r
+#graphing
+#create a graph out of summarized variables that has at least two geom layers.
+
+tall_tree %>%
+  ggplot(aes(neighbourhood_name ,hgt_avg)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = hgt_avg), color = "yellow") +
+  coord_flip()
+```
+
+![](mini-project-1_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+# Question 2
+
+**Is there a relationship between genus and height?**
+
+``` r
+#summarizing
+dia_hgt <- vancouver_trees %>%
+  summarise(genus_name, height_range_id) %>%
+  group_by(genus_name) %>%
+  summarise(mean_hgt = mean(height_range_id)) %>%
+  arrange(desc(mean_hgt))
+  print(dia_hgt)
+```
+
+    ## # A tibble: 97 × 2
+    ##    genus_name          mean_hgt
+    ##    <chr>                  <dbl>
+    ##  1 ULMUS                   5.18
+    ##  2 CUPRESSOCYPARIS   X     5   
+    ##  3 PSEUDOTSUGA             4.92
+    ##  4 POPULUS                 4.88
+    ##  5 PLATANUS                4.63
+    ##  6 AESCULUS                4.60
+    ##  7 BETULA                  4.48
+    ##  8 CATALPA                 4.34
+    ##  9 TSUGA                   4.25
+    ## 10 PTELEA                  4   
+    ## # … with 87 more rows
+
+``` r
+#Create a categorical variable with 3 or more groups from an existing numerical variable.
+dia_hgt <- dia_hgt %>%
+  mutate(tall = mean_hgt > 3, medium = between(mean_hgt,1.5,3), short = between(mean_hgt,0,1.5))
+
+print(dia_hgt)
+```
+
+    ## # A tibble: 97 × 5
+    ##    genus_name          mean_hgt tall  medium short
+    ##    <chr>                  <dbl> <lgl> <lgl>  <lgl>
+    ##  1 ULMUS                   5.18 TRUE  FALSE  FALSE
+    ##  2 CUPRESSOCYPARIS   X     5    TRUE  FALSE  FALSE
+    ##  3 PSEUDOTSUGA             4.92 TRUE  FALSE  FALSE
+    ##  4 POPULUS                 4.88 TRUE  FALSE  FALSE
+    ##  5 PLATANUS                4.63 TRUE  FALSE  FALSE
+    ##  6 AESCULUS                4.60 TRUE  FALSE  FALSE
+    ##  7 BETULA                  4.48 TRUE  FALSE  FALSE
+    ##  8 CATALPA                 4.34 TRUE  FALSE  FALSE
+    ##  9 TSUGA                   4.25 TRUE  FALSE  FALSE
+    ## 10 PTELEA                  4    TRUE  FALSE  FALSE
+    ## # … with 87 more rows
+
+``` r
+#graphing
+#make a graph where it makes sense to customize the alpha transparency.
+
+dia_hgt %>%
+  ggplot(aes(x=genus_name, y=mean_hgt, size = mean_hgt, color = medium)) +
+    geom_point(alpha=0.5) +
+    scale_size(range = c(0.01, 5)) +
+    theme(axis.text.y = element_text(size = 3)) + 
+    coord_flip()
+```
+
+![](mini-project-1_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 <!----------------------------------------------------------------------------->
 
 ### 1.2 (3 points)
@@ -558,7 +683,12 @@ refined, now that you’ve investigated your data a bit more? Which
 research questions are yielding interesting results?
 
 <!-------------------------- Start your work below ---------------------------->
-<!----------------------------------------------------------------------------->
+
+> From “Question 1”, the fact that diameter of trees in western parts of
+> vancouver come with bigger numbers could be concluded. This
+> interpretation can be more evaluated when we have more data (for
+> example: population density) from vancouver western areas.
+> <!----------------------------------------------------------------------------->
 
 ### Attribution
 

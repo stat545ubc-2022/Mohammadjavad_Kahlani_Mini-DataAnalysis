@@ -98,10 +98,13 @@ And that is exactly the first thing that you will do!
 
 <!-------------------------- Start your work below ---------------------------->
 
+```{r, results=F}
+
+fourchoices <- lapply(list(cancer_sample, parking_meters, vancouver_trees, flow_sample), glimpse)
+
+```
 ```{r}
-
-lapply(list(cancer_sample, parking_meters), glimpse)
-
+head(fourchoices)
 ```
 
 > As it is demonstrated above, these 4 datasets are all in tibble format:\
@@ -213,6 +216,12 @@ ggplot( aes(diameter)) +
 # Task 3: Write your research questions (5 points)
 
 So far, you have chosen a dataset and gotten familiar with it through exploring the data. Now it's time to figure out 4 research questions that you would like to answer with your data! Write the 4 questions and any additional comments at the end of this deliverable. These questions are not necessarily set in stone - TAs will review them and give you feedback; therefore, you may choose to pursue them as they are for the rest of the project, or make modifications!
+```html
+Question 1: Which neighborhood has tallest trees in avarage?
+Question 2: Is there a relationship between genus and height?
+Question 3: In each year, which neighborhood had the most planted trees?
+Question 4: If presume height index bigger than 3.5 as tall, is there a relation between root barrier and height of the tree?
+```
 
 <!--- *****START HERE***** --->
 
@@ -244,10 +253,66 @@ Make sure it's clear what research question you are doing each operation for!
 
 <!------------------------- Start your work below ----------------------------->
 
+# Question 1
+__Which neighborhood has tallest trees in avarage?__
 ```{r}
+#summarizing
+tall_tree <- vancouver_trees %>%
+  group_by(neighbourhood_name) %>%
+  summarise(hgt_avg = mean(height_range_id)) %>%
+  arrange(desc(hgt_avg))
+print(tall_tree)
+
+#compute the number of observations for at least one of your categorical variables.
+taller_2.6 <- tall_tree %>%
+  filter(hgt_avg >= 2.6)
+print(taller_2.6)
+
+#number of neighbourhoods with avarge tree heigt greater than 2.6
+length(row.names(taller_2.6))
+```
+```{r}
+#graphing
+#create a graph out of summarized variables that has at least two geom layers.
+
+tall_tree %>%
+  ggplot(aes(neighbourhood_name ,hgt_avg)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = hgt_avg), color = "yellow") +
+  coord_flip()
 
 ```
 
+# Question 2
+__Is there a relationship between genus and height?__
+
+```{r}
+#summarizing
+dia_hgt <- vancouver_trees %>%
+  summarise(genus_name, height_range_id) %>%
+  group_by(genus_name) %>%
+  summarise(mean_hgt = mean(height_range_id)) %>%
+  arrange(desc(mean_hgt))
+  print(dia_hgt)
+
+#Create a categorical variable with 3 or more groups from an existing numerical variable.
+dia_hgt <- dia_hgt %>%
+  mutate(tall = mean_hgt > 3, medium = between(mean_hgt,1.5,3), short = between(mean_hgt,0,1.5))
+
+print(dia_hgt)
+  
+```
+```{r}
+#graphing
+#make a graph where it makes sense to customize the alpha transparency.
+
+dia_hgt %>%
+  ggplot(aes(x=genus_name, y=mean_hgt, size = mean_hgt, color = medium)) +
+    geom_point(alpha=0.5) +
+    scale_size(range = c(0.01, 5)) +
+    theme(axis.text.y = element_text(size = 3)) + 
+    coord_flip()
+```
 <!----------------------------------------------------------------------------->
 
 ### 1.2 (3 points)
@@ -255,7 +320,7 @@ Make sure it's clear what research question you are doing each operation for!
 Based on the operations that you've completed, how much closer are you to answering your research questions? Think about what aspects of your research questions remain unclear. Can your research questions be refined, now that you've investigated your data a bit more? Which research questions are yielding interesting results?
 
 <!-------------------------- Start your work below ---------------------------->
-
+> From "Question 1", the fact that diameter of trees in western parts of vancouver come with bigger numbers could be concluded. This interpretation can be more evaluated when we have more data (for example: population density) from vancouver western areas.
 <!----------------------------------------------------------------------------->
 
 ### Attribution
