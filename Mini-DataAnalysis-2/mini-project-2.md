@@ -1,0 +1,664 @@
+Mini Data Analysis Milestone 2
+================
+
+# Welcome to your second (and last) milestone in your mini data analysis project!
+
+In Milestone 1, you explored your data, came up with research questions,
+and obtained some results by making summary tables and graphs. This
+time, we will first explore more in depth the concept of *tidy data.*
+Then, you’ll be sharpening some of the results you obtained from your
+previous milestone by:
+
+- Manipulating special data types in R: factors and/or dates and times.
+- Fitting a model object to your data, and extract a result.
+- Reading and writing data as separate files.
+
+**NOTE**: The main purpose of the mini data analysis is to integrate
+what you learn in class in an analysis. Although each milestone provides
+a framework for you to conduct your analysis, it’s possible that you
+might find the instructions too rigid for your data set. If this is the
+case, you may deviate from the instructions – just make sure you’re
+demonstrating a wide range of tools and techniques taught in this class.
+
+# Instructions
+
+**To complete this milestone**, edit [this very `.Rmd`
+file](https://raw.githubusercontent.com/UBC-STAT/stat545.stat.ubc.ca/master/content/mini-project/mini-project-2.Rmd)
+directly. Fill in the sections that are tagged with
+`<!--- start your work here--->`.
+
+**To submit this milestone**, make sure to knit this `.Rmd` file to an
+`.md` file by changing the YAML output settings from
+`output: html_document` to `output: github_document`. Commit and push
+all of your work to your mini-analysis GitHub repository, and tag a
+release on GitHub. Then, submit a link to your tagged release on canvas.
+
+**Points**: This milestone is worth 55 points (compared to the 45 points
+of the Milestone 1): 45 for your analysis, and 10 for your entire
+mini-analysis GitHub repository. Details follow.
+
+**Research Questions**: In Milestone 1, you chose two research questions
+to focus on. Wherever realistic, your work in this milestone should
+relate to these research questions whenever we ask for justification
+behind your work. In the case that some tasks in this milestone don’t
+align well with one of your research questions, feel free to discuss
+your results in the context of a different research question.
+
+# Learning Objectives
+
+By the end of this milestone, you should:
+
+- Understand what *tidy* data is, and how to create it using `tidyr`.
+- Generate a reproducible and clear report using R Markdown.
+- Manipulating special data types in R: factors and/or dates and times.
+- Fitting a model object to your data, and extract a result.
+- Reading and writing data as separate files.
+
+# Setup
+
+Begin by loading your data and the tidyverse package below:
+
+``` r
+library(datateachr) # <- might contain the data you picked!
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
+```
+
+# Task 1: Tidy your data (15 points)
+
+In this task, we will do several exercises to reshape our data. The goal
+here is to understand how to do this reshaping with the `tidyr` package.
+
+A reminder of the definition of *tidy* data:
+
+- Each row is an **observation**
+- Each column is a **variable**
+- Each cell is a **value**
+
+*Tidy’ing* data is sometimes necessary because it can simplify
+computation. Other times it can be nice to organize data so that it can
+be easier to understand when read manually.
+
+### 2.1 (2.5 points)
+
+Based on the definition above, can you identify if your data is tidy or
+untidy? Go through all your columns, or if you have \>8 variables, just
+pick 8, and explain whether the data is untidy or tidy.
+
+``` r
+vancouver_trees %>%
+  select(1, 3, 13, 15:19) %>%
+  head()
+```
+
+    ## # A tibble: 6 × 8
+    ##   tree_id std_street neighbourhood_name heigh…¹ diame…² curb  date_pla…³ longi…⁴
+    ##     <dbl> <chr>      <chr>                <dbl>   <dbl> <chr> <date>       <dbl>
+    ## 1  149556 W 58TH AV  MARPOLE                  2      10 N     1999-01-13   -123.
+    ## 2  149563 W 58TH AV  MARPOLE                  4      10 N     1996-05-31   -123.
+    ## 3  149579 WINDSOR ST KENSINGTON-CEDAR …       3       4 Y     1993-11-22   -123.
+    ## 4  149590 E 39TH AV  KENSINGTON-CEDAR …       4      18 Y     1996-04-29   -123.
+    ## 5  149604 WINDSOR ST KENSINGTON-CEDAR …       2       9 Y     1993-12-17   -123.
+    ## 6  149616 W 61ST AV  MARPOLE                  2       5 Y     NA           -123.
+    ## # … with abbreviated variable names ¹​height_range_id, ²​diameter, ³​date_planted,
+    ## #   ⁴​longitude
+
+> **As part of “vancouver_trees” data is shown above, it is in tidy
+> format.**
+
+### 2.2 (5 points)
+
+Now, if your data is tidy, untidy it! Then, tidy it back to it’s
+original state.
+
+If your data is untidy, then tidy it! Then, untidy it back to it’s
+original state.
+
+Be sure to explain your reasoning for this task. Show us the “before”
+and “after”.
+
+  
+**After/Untidy**
+
+``` r
+# To make the dataset untidy, pivot_wider can be used to mix two columns as an example. Now each genus has a column and the height range is mixed in cells of each column.
+# I chosse columns 20 to 30 in addition to tree_id.
+
+vancouver_trees %>%
+pivot_wider(names_from = genus_name,
+            values_from = height_range_id
+) %>%
+  select(1, 20:30) %>%
+  head()
+```
+
+    ## # A tibble: 6 × 12
+    ##   tree_id ZELKOVA STYRAX FRAXINUS  ACER PYRUS TILIA HIBISCUS LIQUIDAMBAR PRUNUS
+    ##     <dbl>   <dbl>  <dbl>    <dbl> <dbl> <dbl> <dbl>    <dbl>       <dbl>  <dbl>
+    ## 1  149556      NA     NA       NA    NA    NA    NA       NA          NA     NA
+    ## 2  149563       4     NA       NA    NA    NA    NA       NA          NA     NA
+    ## 3  149579      NA      3       NA    NA    NA    NA       NA          NA     NA
+    ## 4  149590      NA     NA        4    NA    NA    NA       NA          NA     NA
+    ## 5  149604      NA     NA       NA     2    NA    NA       NA          NA     NA
+    ## 6  149616      NA     NA       NA    NA     2    NA       NA          NA     NA
+    ## # … with 2 more variables: CARPINUS <dbl>, QUERCUS <dbl>
+
+**Before/Tidy**
+
+``` r
+vancouver_trees %>%
+  select(tree_id, genus_name, height_range_id) %>%
+  head()
+```
+
+    ## # A tibble: 6 × 3
+    ##   tree_id genus_name height_range_id
+    ##     <dbl> <chr>                <dbl>
+    ## 1  149556 ULMUS                    2
+    ## 2  149563 ZELKOVA                  4
+    ## 3  149579 STYRAX                   3
+    ## 4  149590 FRAXINUS                 4
+    ## 5  149604 ACER                     2
+    ## 6  149616 PYRUS                    2
+
+  
+
+### 2.3 (7.5 points)
+
+Now, you should be more familiar with your data, and also have made
+progress in answering your research questions. Based on your interest,
+and your analyses, pick 2 of the 4 research questions to continue your
+analysis in the next four tasks:
+
+1.  ***In each year, which neighborhood had the most planted trees?***
+2.  ***If presume height index bigger than 3.5 as tall, is there a
+    relation between root barrier and height of the tree?***
+
+Explain your decision for choosing the above two research questions.
+
+**The first question can give us an insight of tree planting trend in
+Vancouver and the second question will give us a more clear view if
+there is a relation of root barrier effecting on tree height.**
+
+Now, try to choose a version of your data that you think will be
+appropriate to answer these 2 questions. Use between 4 and 8 functions
+that we’ve covered so far (i.e. by filtering, cleaning, tidy’ing,
+dropping irrelevant columns, etc.).  
+
+# First Question: In each year, which neighborhood had the most planted trees?
+
+``` html
+Unfortunately, geom_line() did not work to have a connected scatter plot.
+```
+
+``` r
+Vtree_year <- vancouver_trees %>%
+  separate(date_planted, into = c("year","month","day"), sep = "-") %>%
+  drop_na(year) %>%
+  group_by(year) %>%
+  summarise(planting_count = n())
+Vtree_year
+```
+
+    ## # A tibble: 31 × 2
+    ##    year  planting_count
+    ##    <chr>          <int>
+    ##  1 1989             300
+    ##  2 1990            1145
+    ##  3 1991             579
+    ##  4 1992            1759
+    ##  5 1993            2128
+    ##  6 1994            1879
+    ##  7 1995            2912
+    ##  8 1996            3079
+    ##  9 1997            2778
+    ## 10 1998            3581
+    ## # … with 21 more rows
+
+``` r
+Vtree_year %>%
+    ggplot(aes(x=year, y=planting_count)) +
+    geom_point(shape=21, fill="#69b3a2", size=2) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    xlab("Year") + ylab("Tree Count")
+```
+
+![](mini-project-2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->  
+**As it is demonstrated in the scatterplot above, the count of planted
+trees has undergone an overall decrease over the past few years.**  
+
+# Second Question: If presume height index bigger than 3.5 as tall, is there a relation between root barrier and height of the tree?
+
+``` r
+rootb_height <- vancouver_trees %>%
+  select(c("height_range_id", "root_barrier")) %>%
+  filter(height_range_id > 3.5) %>%
+  group_by(root_barrier) %>%
+  summarise(Barrier = n())
+  rootb_height
+```
+
+    ## # A tibble: 2 × 2
+    ##   root_barrier Barrier
+    ##   <chr>          <int>
+    ## 1 N              37757
+    ## 2 Y                168
+
+  
+**The number of tall trees with a root barrier is much less than those
+who have not reached a barrier in their root growth. It can be roughly
+concluded that root barrier has an effect on tree height.**  
+
+# Task 2: Special Data Types (10)
+
+For this exercise, you’ll be choosing two of the three tasks below –
+both tasks that you choose are worth 5 points each.
+
+But first, tasks 1 and 2 below ask you to modify a plot you made in a
+previous milestone. The plot you choose should involve plotting across
+at least three groups (whether by facetting, or using an aesthetic like
+colour). Place this plot below (you’re allowed to modify the plot if
+you’d like). If you don’t have such a plot, you’ll need to make one.
+Place the code for your plot below.
+
+``` r
+dia_hgt <- vancouver_trees %>%
+  summarise(genus_name, height_range_id) %>%
+  group_by(genus_name) %>%
+  summarise(mean_hgt = mean(height_range_id)) %>%
+  arrange(desc(mean_hgt))
+dia_hgt <- dia_hgt %>%
+  mutate(tall = mean_hgt > 3, medium = between(mean_hgt,1.5,3), short = between(mean_hgt,0,1.5))
+dia_hgt %>%
+  ggplot(aes(x=genus_name, y=mean_hgt, size = mean_hgt, color = medium)) +
+    geom_point(alpha=0.5) +
+    scale_size(range = c(0.01, 5)) +
+    theme(axis.text.y = element_text(size = 3)) + 
+    coord_flip()
+```
+
+![](mini-project-2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> Now,
+choose two of the following tasks.
+
+1.  Produce a new plot that reorders a factor in your original plot,
+    using the `forcats` package (3 points). Then, in a sentence or two,
+    briefly explain why you chose this ordering (1 point here for
+    demonstrating understanding of the reordering, and 1 point for
+    demonstrating some justification for the reordering, which could be
+    subtle or speculative.)
+
+2.  Produce a new plot that groups some factor levels together into an
+    “other” category (or something similar), using the `forcats` package
+    (3 points). Then, in a sentence or two, briefly explain why you
+    chose this grouping (1 point here for demonstrating understanding of
+    the grouping, and 1 point for demonstrating some justification for
+    the grouping, which could be subtle or speculative.)
+
+3.  If your data has some sort of time-based column like a date (but
+    something more granular than just a year):
+
+    1.  Make a new column that uses a function from the `lubridate` or
+        `tsibble` package to modify your original time-based column. (3
+        points)
+
+        - Note that you might first have to *make* a time-based column
+          using a function like `ymd()`, but this doesn’t count.
+        - Examples of something you might do here: extract the day of
+          the year from a date, or extract the weekday, or let 24 hours
+          elapse on your dates.
+
+    2.  Then, in a sentence or two, explain how your new column might be
+        useful in exploring a research question. (1 point for
+        demonstrating understanding of the function you used, and 1
+        point for your justification, which could be subtle or
+        speculative).
+
+        - For example, you could say something like “Investigating the
+          day of the week might be insightful because penguins don’t
+          work on weekends, and so may respond differently”.
+
+**1: Produce a new plot that reorders a factor in your original
+plot.**  
+**Height intervals can act as factors, while each interval has specific
+associations.**
+
+``` r
+Task1 <- pivot_longer(dia_hgt, cols = c("tall", "medium", "short"), names_to = "height_category")
+Task1 <- Task1 %>%
+  filter(value == "TRUE") %>%
+  select(genus_name, height_category, mean_hgt)
+as.factor(Task1$height_category)
+levels(Task1$height_category) <- c("tall","medium","short")
+```
+
+``` r
+ggplot(Task1) + geom_boxplot(aes(x = height_category, y = mean_hgt)) +
+  labs(y = "height average", x= "height category levels") +
+  scale_x_discrete(drop = TRUE) +
+  ggtitle("average hight in height categories") +
+  theme_bw() 
+```
+
+![](mini-project-2_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->  
+  
+
+**2: Produce a new plot that groups some factor levels together into an
+“other” category.**  
+**Short and medium entries can be grouped as others, as we might be
+interested only in comparing tall category with all others.**
+
+``` r
+ntask1 <- Task1 %>%
+  mutate(height_category = fct_reorder(height_category, mean_hgt, mean))
+ntask1
+```
+
+    ## # A tibble: 99 × 3
+    ##    genus_name          height_category mean_hgt
+    ##    <chr>               <fct>              <dbl>
+    ##  1 ULMUS               tall                5.18
+    ##  2 CUPRESSOCYPARIS   X tall                5   
+    ##  3 PSEUDOTSUGA         tall                4.92
+    ##  4 POPULUS             tall                4.88
+    ##  5 PLATANUS            tall                4.63
+    ##  6 AESCULUS            tall                4.60
+    ##  7 BETULA              tall                4.48
+    ##  8 CATALPA             tall                4.34
+    ##  9 TSUGA               tall                4.25
+    ## 10 PTELEA              tall                4   
+    ## # … with 89 more rows
+
+# Task 3: Modelling
+
+## 2.0 (no points)
+
+Pick a research question, and pick a variable of interest (we’ll call it
+“Y”) that’s relevant to the research question. Indicate these.
+
+``` r
+fittedmodel <- vancouver_trees %>%
+select(tree_id, genus_name, height_range_id, diameter)
+fittedmodel
+```
+
+    ## # A tibble: 146,611 × 4
+    ##    tree_id genus_name height_range_id diameter
+    ##      <dbl> <chr>                <dbl>    <dbl>
+    ##  1  149556 ULMUS                    2     10  
+    ##  2  149563 ZELKOVA                  4     10  
+    ##  3  149579 STYRAX                   3      4  
+    ##  4  149590 FRAXINUS                 4     18  
+    ##  5  149604 ACER                     2      9  
+    ##  6  149616 PYRUS                    2      5  
+    ##  7  149617 ACER                     3     15  
+    ##  8  149618 ACER                     3     14  
+    ##  9  149619 ACER                     2     16  
+    ## 10  149625 FRAXINUS                 2      7.5
+    ## # … with 146,601 more rows
+
+**Research Question**: Fit a linear regression model to diameter (“Y”)
+from height (“X”) by filling in the formula
+
+**Variable of interest**: Diameter
+
+<!----------------------------------------------------------------------------->
+
+## 2.1 (5 points)
+
+Fit a model or run a hypothesis test that provides insight on this
+variable with respect to the research question. Store the model object
+as a variable, and print its output to screen. We’ll omit having to
+justify your choice, because we don’t expect you to know about model
+specifics in STAT 545.
+
+- **Note**: It’s OK if you don’t know how these models/tests work. Here
+  are some examples of things you can do here, but the sky’s the limit.
+
+  - You could fit a model that makes predictions on Y using another
+    variable, by using the `lm()` function.
+  - You could test whether the mean of Y equals 0 using `t.test()`, or
+    maybe the mean across two groups are different using `t.test()`, or
+    maybe the mean across multiple groups are different using `anova()`
+    (you may have to pivot your data for the latter two).
+  - You could use `lm()` to test for significance of regression.
+
+**I want to get the height and diameter fitted linear regression model
+for the “FICUS” genus**
+
+``` r
+ficusmodel <- fittedmodel %>%
+   filter(genus_name == "FICUS")
+linear_ficusmodel <- lm(diameter ~ height_range_id, ficusmodel)
+summary(linear_ficusmodel)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = diameter ~ height_range_id, data = ficusmodel)
+    ## 
+    ## Residuals:
+    ##    Min     1Q Median     3Q    Max 
+    ## -4.550 -3.550 -2.300  4.138  7.200 
+    ## 
+    ## Coefficients:
+    ##                 Estimate Std. Error t value Pr(>|t|)
+    ## (Intercept)        6.050      4.748   1.274    0.238
+    ## height_range_id    0.750      3.003   0.250    0.809
+    ## 
+    ## Residual standard error: 4.748 on 8 degrees of freedom
+    ## Multiple R-squared:  0.007737,   Adjusted R-squared:  -0.1163 
+    ## F-statistic: 0.06238 on 1 and 8 DF,  p-value: 0.8091
+
+## 2.2 (5 points)
+
+Produce something relevant from your fitted model: either predictions on
+Y, or a single value like a regression coefficient or a p-value.
+
+- Be sure to indicate in writing what you chose to produce.
+- Your code should either output a tibble (in which case you should
+  indicate the column that contains the thing you’re looking for), or
+  the thing you’re looking for itself.
+- Obtain your results using the `broom` package if possible. If your
+  model is not compatible with the broom function you’re needing, then
+  you can obtain your results by some other means, but first indicate
+  which broom function is not compatible.
+
+**We can look into the the intercept of our data as we set the 0 equal
+to 3 which is the minimum of diameter**
+
+``` r
+lm(height_range_id ~ I(diameter-3), ficusmodel)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = height_range_id ~ I(diameter - 3), data = ficusmodel)
+    ## 
+    ## Coefficients:
+    ##     (Intercept)  I(diameter - 3)  
+    ##         1.45693          0.01032
+
+  
+
+``` r
+library(broom)
+tidy(linear_ficusmodel)
+```
+
+    ## # A tibble: 2 × 5
+    ##   term            estimate std.error statistic p.value
+    ##   <chr>              <dbl>     <dbl>     <dbl>   <dbl>
+    ## 1 (Intercept)        6.05       4.75     1.27    0.238
+    ## 2 height_range_id    0.750      3.00     0.250   0.809
+
+# Task 4: Reading and writing data
+
+Get set up for this exercise by making a folder called `output` in the
+top level of your project folder / repository. You’ll be saving things
+there.
+
+## 3.1 (5 points)
+
+Take a summary table that you made from Milestone 1 (Task 4.2), and
+write it as a csv file in your `output` folder. Use the `here::here()`
+function.
+
+- **Robustness criteria**: You should be able to move your Mini Project
+  repository / project folder to some other location on your computer,
+  or move this very Rmd file to another location within your project
+  repository / folder, and your code should still work.
+- **Reproducibility criteria**: You should be able to delete the csv
+  file, and remake it simply by knitting this Rmd file.
+
+``` r
+summary <- vancouver_trees %>%
+  select(genus_name,diameter, height_range_id) %>%
+  group_by(height_range_id) %>%
+  summarize(dia_avg = mean(diameter),
+            dia_med = median(diameter),
+            dia_sdeviation = sd(diameter),
+            dia_range = range(diameter))
+summary <- data.frame(summary)
+print(summary)
+```
+
+    ##    height_range_id   dia_avg dia_med dia_sdeviation dia_range
+    ## 1                0  5.407009     3.0       8.110500       0.0
+    ## 2                0  5.407009     3.0       8.110500      55.0
+    ## 3                1  3.917364     3.0       2.279372       0.0
+    ## 4                1  3.917364     3.0       2.279372      86.0
+    ## 5                2  8.376343     7.0       5.987273       0.0
+    ## 6                2  8.376343     7.0       5.987273     435.0
+    ## 7                3 14.641436    13.0       7.601208       0.0
+    ## 8                3 14.641436    13.0       7.601208     141.0
+    ## 9                4 16.562707    15.5       7.034131       1.0
+    ## 10               4 16.562707    15.5       7.034131     317.0
+    ## 11               5 22.824920    22.5       7.163670       1.0
+    ## 12               5 22.824920    22.5       7.163670      99.0
+    ## 13               6 27.268643    27.0       7.111473       0.0
+    ## 14               6 27.268643    27.0       7.111473      99.0
+    ## 15               7 30.775249    30.0       7.458009       2.5
+    ## 16               7 30.775249    30.0       7.458009      75.0
+    ## 17               8 33.250818    33.0       8.273350       3.0
+    ## 18               8 33.250818    33.0       8.273350      99.0
+    ## 19               9 34.789409    35.0       9.691061       2.0
+    ## 20               9 34.789409    35.0       9.691061      67.0
+    ## 21              10 34.145833    39.0      15.274927       3.0
+    ## 22              10 34.145833    39.0      15.274927      50.0
+
+``` r
+dir.create(here::here("output"))
+```
+
+    ## Warning in dir.create(here::here("output")): 'C:\Users\KAHLANI\Documents\R
+    ## Repository\Mohammadjavad_Kahlani_Mini-DataAnalysis\output' already exists
+
+``` r
+write_csv(summary, here::here("output", "mda2_summary.csv"))
+```
+
+## 3.2 (5 points)
+
+Write your model object from Task 3 to an R binary file (an RDS), and
+load it again. Be sure to save the binary file in your `output` folder.
+Use the functions `saveRDS()` and `readRDS()`.
+
+- The same robustness and reproducibility criteria as in 3.1 apply here.
+
+``` r
+saveRDS(linear_ficusmodel, here::here("output", "lmficus_rds.RDS"))
+dir(here::here("output"))
+```
+
+    ## [1] "linear_ficusmodel_rds.RDS" "lmficus_rds.RDS"          
+    ## [3] "mda2_summary.csv"
+
+``` r
+readRDS(here::here("output", "lmficus_rds.RDS"))
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = diameter ~ height_range_id, data = ficusmodel)
+    ## 
+    ## Coefficients:
+    ##     (Intercept)  height_range_id  
+    ##            6.05             0.75
+
+# Tidy Repository
+
+Now that this is your last milestone, your entire project repository
+should be organized. Here are the criteria we’re looking for.
+
+## Main README (3 points)
+
+There should be a file named `README.md` at the top level of your
+repository. Its contents should automatically appear when you visit the
+repository on GitHub.
+
+Minimum contents of the README file:
+
+- In a sentence or two, explains what this repository is, so that
+  future-you or someone else stumbling on your repository can be
+  oriented to the repository.
+- In a sentence or two (or more??), briefly explains how to engage with
+  the repository. You can assume the person reading knows the material
+  from STAT 545A. Basically, if a visitor to your repository wants to
+  explore your project, what should they know?
+
+Once you get in the habit of making README files, and seeing more README
+files in other projects, you’ll wonder how you ever got by without them!
+They are tremendously helpful.
+
+## File and Folder structure (3 points)
+
+You should have at least three folders in the top level of your
+repository: one for each milestone, and one output folder. If there are
+any other folders, these are explained in the main README.
+
+Each milestone document is contained in its respective folder, and
+nowhere else.
+
+Every level-1 folder (that is, the ones stored in the top level, like
+“Milestone1” and “output”) has a `README` file, explaining in a sentence
+or two what is in the folder, in plain language (it’s enough to say
+something like “This folder contains the source for Milestone 1”).
+
+## Output (2 points)
+
+All output is recent and relevant:
+
+- All Rmd files have been `knit`ted to their output, and all data files
+  saved from Task 4 above appear in the `output` folder.
+- All of these output files are up-to-date – that is, they haven’t
+  fallen behind after the source (Rmd) files have been updated.
+- There should be no relic output files. For example, if you were
+  knitting an Rmd to html, but then changed the output to be only a
+  markdown file, then the html file is a relic and should be deleted.
+
+Our recommendation: delete all output files, and re-knit each
+milestone’s Rmd file, so that everything is up to date and relevant.
+
+PS: there’s a way where you can run all project code using a single
+command, instead of clicking “knit” three times. More on this in STAT
+545B!
+
+## Error-free code (1 point)
+
+This Milestone 1 document knits error-free, and the Milestone 2 document
+knits error-free.
+
+Plots failing to show up on Github in the .md counts as an error here.
+So does the entire .md failing to show up on Github in the .md (“Sorry
+about that, but we can’t show files that are this big right now”).
+
+## Tagged release (1 point)
+
+You’ve tagged a release for Milestone 1, and you’ve tagged a release for
+Milestone 2.
+
+### Attribution
+
+Thanks to Victor Yuan for mostly putting this together.
