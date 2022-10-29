@@ -1,9 +1,7 @@
 ---
 title: "Mini Data Analysis Milestone 2"
-output: html_document
+output: github_document
 ---
-
-*To complete this milestone, you can edit [this `.rmd` file](https://raw.githubusercontent.com/UBC-STAT/stat545.stat.ubc.ca/master/content/mini-project/mini-project-2.Rmd) directly. Fill in the sections that are commented out with `<!--- start your work here--->`. When you are done, make sure to knit to an `.md` file by changing the output in the YAML header to `github_document`, before submitting a tagged release on canvas.*
 
 # Welcome to your second (and last) milestone in your mini data analysis project!
 
@@ -42,6 +40,9 @@ Begin by loading your data and the tidyverse package below:
 ```{r, message = FALSE}
 library(datateachr) # <- might contain the data you picked!
 library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(hrbrthemes)
 ```
 
 # Task 1: Tidy your data (15 points)
@@ -60,9 +61,13 @@ A reminder of the definition of *tidy* data:
 
 Based on the definition above, can you identify if your data is tidy or untidy? Go through all your columns, or if you have \>8 variables, just pick 8, and explain whether the data is untidy or tidy.
 
-<!--------------------------- Start your work below --------------------------->
+```{r}
+vancouver_trees %>%
+  select(1, 3, 13, 15:19) %>%
+  head()
+```
 
-<!----------------------------------------------------------------------------->
+>**As part of "vancouver_trees" data is shown above, it is in tidy format.**
 
 ### 2.2 (5 points)
 
@@ -72,32 +77,75 @@ If your data is untidy, then tidy it! Then, untidy it back to it's original stat
 
 Be sure to explain your reasoning for this task. Show us the "before" and "after".
 
-<!--------------------------- Start your work below --------------------------->
+\
+**After/Untidy**
+```{r}
+# To make the dataset untidy, pivot_wider can be used to mix two columns as an example. Now each genus has a column and the height range is mixed in cells of each column.
+# I chosse columns 20 to 30 in addition to tree_id.
 
-<!----------------------------------------------------------------------------->
+vancouver_trees %>%
+pivot_wider(names_from = genus_name,
+            values_from = height_range_id
+) %>%
+  select(1, 20:30) %>%
+  head()
+
+```
+**Before/Tidy**
+```{r}
+vancouver_trees %>%
+  select(tree_id, genus_name, height_range_id) %>%
+  head()
+```
+\
 
 ### 2.3 (7.5 points)
 
 Now, you should be more familiar with your data, and also have made progress in answering your research questions. Based on your interest, and your analyses, pick 2 of the 4 research questions to continue your analysis in the next four tasks:
 
-<!-------------------------- Start your work below ---------------------------->
 
-1.  *FILL_THIS_IN*
-2.  *FILL_THIS_IN*
+1.  __*In each year, which neighborhood had the most planted trees?*__
+2.  __*If presume height index bigger than 3.5 as tall, is there a relation between root barrier and height of the tree?*__
 
-<!----------------------------------------------------------------------------->
 
 Explain your decision for choosing the above two research questions.
 
-<!--------------------------- Start your work below --------------------------->
+__The first question can give us an insight of tree planting trend in Vancouver and the second question will give us a more clear view if there is a relation of root barrier effecting on tree height.__ 
 
-<!----------------------------------------------------------------------------->
+Now, try to choose a version of your data that you think will be appropriate to answer these 2 questions. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelevant columns, etc.).\
 
-Now, try to choose a version of your data that you think will be appropriate to answer these 2 questions. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelevant columns, etc.).
+# First Question: In each year, which neighborhood had the most planted trees?
+```html
+Unfortunately, geom_line() did not work to have a connected scatter plot.
+```
+```{r,  message = FALSE}
+Vtree_year <- vancouver_trees %>%
+  separate(date_planted, into = c("year","month","day"), sep = "-") %>%
+  drop_na(year) %>%
+  group_by(year) %>%
+  summarise(planting_count = n())
+Vtree_year
+Vtree_year %>%
+    ggplot(aes(x=year, y=planting_count)) +
+    geom_point(shape=21, fill="#69b3a2", size=2) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    xlab("Year") + ylab("Tree Count")
+```
+\
+__As it is demonstrated in the scatterplot above, the count of planted trees has undergone an overall decrease over the past few years.__\
 
-<!--------------------------- Start your work below --------------------------->
-
-<!----------------------------------------------------------------------------->
+# Second Question: If presume height index bigger than 3.5 as tall, is there a relation between root barrier and height of the tree?
+```{r}
+rootb_height <- vancouver_trees %>%
+  select(c("height_range_id", "root_barrier")) %>%
+  filter(height_range_id > 3.5) %>%
+  group_by(root_barrier) %>%
+  summarise(Barrier = n())
+  rootb_height
+```
+\
+__The number of tall trees with a root barrier is much less than those who have not reached a barrier in their root growth. It can be roughly concluded that root barrier has an effect on tree height.__
+\
 
 # Task 2: Special Data Types (10)
 
@@ -105,10 +153,21 @@ For this exercise, you'll be choosing two of the three tasks below -- both tasks
 
 But first, tasks 1 and 2 below ask you to modify a plot you made in a previous milestone. The plot you choose should involve plotting across at least three groups (whether by facetting, or using an aesthetic like colour). Place this plot below (you're allowed to modify the plot if you'd like). If you don't have such a plot, you'll need to make one. Place the code for your plot below.
 
-<!-------------------------- Start your work below ---------------------------->
-
-<!----------------------------------------------------------------------------->
-
+```{r}
+dia_hgt <- vancouver_trees %>%
+  summarise(genus_name, height_range_id) %>%
+  group_by(genus_name) %>%
+  summarise(mean_hgt = mean(height_range_id)) %>%
+  arrange(desc(mean_hgt))
+dia_hgt <- dia_hgt %>%
+  mutate(tall = mean_hgt > 3, medium = between(mean_hgt,1.5,3), short = between(mean_hgt,0,1.5))
+dia_hgt %>%
+  ggplot(aes(x=genus_name, y=mean_hgt, size = mean_hgt, color = medium)) +
+    geom_point(alpha=0.5) +
+    scale_size(range = c(0.01, 5)) +
+    theme(axis.text.y = element_text(size = 3)) + 
+    coord_flip()
+```
 Now, choose two of the following tasks.
 
 1.  Produce a new plot that reorders a factor in your original plot, using the `forcats` package (3 points). Then, in a sentence or two, briefly explain why you chose this ordering (1 point here for demonstrating understanding of the reordering, and 1 point for demonstrating some justification for the reordering, which could be subtle or speculative.)
@@ -126,17 +185,34 @@ Now, choose two of the following tasks.
 
         -   For example, you could say something like "Investigating the day of the week might be insightful because penguins don't work on weekends, and so may respond differently".
 
-<!-------------------------- Start your work below ---------------------------->
+**1: Produce a new plot that reorders a factor in your original plot.**\
+**Height intervals can act as factors, while each interval has specific associations.**
+```{r, message = FALSE, results= "hide"}
+Task1 <- pivot_longer(dia_hgt, cols = c("tall", "medium", "short"), names_to = "height_category")
+Task1 <- Task1 %>%
+  filter(value == "TRUE") %>%
+  select(genus_name, height_category, mean_hgt)
+as.factor(Task1$height_category)
+levels(Task1$height_category) <- c("tall","medium","short")
+```
+```{r}
+ggplot(Task1) + geom_boxplot(aes(x = height_category, y = mean_hgt)) +
+  labs(y = "height average", x= "height category levels") +
+  scale_x_discrete(drop = TRUE) +
+  ggtitle("average hight in height categories") +
+  theme_bw() 
+```
+\
+\
 
-**Task Number**: FILL_THIS_IN
+**2: Produce a new plot that groups some factor levels together into an "other" category.**\
+**Short and medium entries can be grouped as others, as we might be interested only in comparing tall category with all others.**
 
-<!----------------------------------------------------------------------------->
-
-<!-------------------------- Start your work below ---------------------------->
-
-**Task Number**: FILL_THIS_IN
-
-<!----------------------------------------------------------------------------->
+```{r}
+ntask1 <- Task1 %>%
+  mutate(height_category = fct_reorder(height_category, mean_hgt, mean))
+ntask1
+```
 
 # Task 3: Modelling
 
@@ -144,11 +220,15 @@ Now, choose two of the following tasks.
 
 Pick a research question, and pick a variable of interest (we'll call it "Y") that's relevant to the research question. Indicate these.
 
-<!-------------------------- Start your work below ---------------------------->
+```{r}
+fittedmodel <- vancouver_trees %>%
+select(tree_id, genus_name, height_range_id, diameter)
+fittedmodel
+```
 
-**Research Question**: FILL_THIS_IN
+**Research Question**: Fit a linear regression model to diameter ("Y") from height ("X") by filling in the formula
 
-**Variable of interest**: FILL_THIS_IN
+**Variable of interest**: Diameter
 
 <!----------------------------------------------------------------------------->
 
@@ -162,9 +242,14 @@ Fit a model or run a hypothesis test that provides insight on this variable with
     -   You could test whether the mean of Y equals 0 using `t.test()`, or maybe the mean across two groups are different using `t.test()`, or maybe the mean across multiple groups are different using `anova()` (you may have to pivot your data for the latter two).
     -   You could use `lm()` to test for significance of regression.
 
-<!-------------------------- Start your work below ---------------------------->
+__I want to get the height and diameter fitted linear regression model for the "FICUS" genus__
 
-<!----------------------------------------------------------------------------->
+```{r}
+ficusmodel <- fittedmodel %>%
+   filter(genus_name == "FICUS")
+linear_ficusmodel <- lm(diameter ~ height_range_id, ficusmodel)
+summary(linear_ficusmodel)
+```
 
 ## 2.2 (5 points)
 
@@ -174,9 +259,15 @@ Produce something relevant from your fitted model: either predictions on Y, or a
 -   Your code should either output a tibble (in which case you should indicate the column that contains the thing you're looking for), or the thing you're looking for itself.
 -   Obtain your results using the `broom` package if possible. If your model is not compatible with the broom function you're needing, then you can obtain your results by some other means, but first indicate which broom function is not compatible.
 
-<!-------------------------- Start your work below ---------------------------->
-
-<!----------------------------------------------------------------------------->
+__We can look into the the intercept of our data as we set the 0 equal to 3 which is the minimum of diameter__
+```{r}
+lm(height_range_id ~ I(diameter-3), ficusmodel)
+```
+\
+```{r}
+library(broom)
+tidy(linear_ficusmodel)
+```
 
 # Task 4: Reading and writing data
 
@@ -189,19 +280,34 @@ Take a summary table that you made from Milestone 1 (Task 4.2), and write it as 
 -   **Robustness criteria**: You should be able to move your Mini Project repository / project folder to some other location on your computer, or move this very Rmd file to another location within your project repository / folder, and your code should still work.
 -   **Reproducibility criteria**: You should be able to delete the csv file, and remake it simply by knitting this Rmd file.
 
-<!-------------------------- Start your work below ---------------------------->
-
-<!----------------------------------------------------------------------------->
-
+```{r, message=FALSE}
+summary <- vancouver_trees %>%
+  select(genus_name,diameter, height_range_id) %>%
+  group_by(height_range_id) %>%
+  summarize(dia_avg = mean(diameter),
+            dia_med = median(diameter),
+            dia_sdeviation = sd(diameter),
+            dia_range = range(diameter))
+summary <- data.frame(summary)
+print(summary)
+```
+```{r}
+dir.create(here::here("output"))
+write_csv(summary, here::here("output", "mda2_summary.csv"))
+```
 ## 3.2 (5 points)
 
 Write your model object from Task 3 to an R binary file (an RDS), and load it again. Be sure to save the binary file in your `output` folder. Use the functions `saveRDS()` and `readRDS()`.
 
 -   The same robustness and reproducibility criteria as in 3.1 apply here.
 
-<!-------------------------- Start your work below ---------------------------->
-
-<!----------------------------------------------------------------------------->
+```{r}
+saveRDS(linear_ficusmodel, here::here("output", "lmficus_rds.RDS"))
+dir(here::here("output"))
+```
+```{r}
+readRDS(here::here("output", "lmficus_rds.RDS"))
+```
 
 # Tidy Repository
 
